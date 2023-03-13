@@ -94,7 +94,7 @@ const trackerAddRole = [
       type: 'list',
       name: 'departmentList',
       message: "Select department of role (required)",
-      choices: getDepartments 
+      choices: getDepartments(), 
     },
     {
       type: 'input',
@@ -203,30 +203,37 @@ const trackerSwitch = (data) => {
         case trackerMain_options[0]: //view departments
             viewDepartments();
             break;
+
         case trackerMain_options[1]: //view roles
             viewRoles();
             break;
+            
         case trackerMain_options[2]: //view employees
             viewEmployees();
             break;
+        
         case trackerMain_options[3]: //add department
             inquirer.prompt(trackerAddDepartment)
             .then((response)=> addDepartment(response.departmentName))
             .catch(()=>console.error("Oops, Something went wrong :("));
             break;
+
         case trackerMain_options[4]: //add role
             inquirer.prompt(trackerAddRole)
             .then((response)=> addRole(response))
             //.catch(()=>console.error("Oops, Something went wrong :("));
             break;
+
         case trackerMain_options[5]: //add employee
             inquirer.prompt(trackerAddEmployee)
             .then((response)=> addEmployee(response))
             .catch(()=>console.error("Oops, Something went wrong :("));
             break;
+
         case trackerMain_options[6]: //update employee
             updateEmployee();
             break;
+
         case trackerMain_options[7]: //exit
             exit();
             break;
