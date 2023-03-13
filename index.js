@@ -35,12 +35,117 @@ const trackerMain_options = [
 const trackerMain = [   
   {
     type: 'list',
+    name: 'main_options',
     message: 'Select one of the following options',            
     choices : trackerMain_options,       
-    name: 'main_options',
+    
   },
 ]
 
+const trackerAddDepartment = [
+  {
+    type: 'input',
+    name: 'departmentName',
+    message: "Enter new department name (required)",
+    validate: departmentName => {
+      if (departmentName) return true;
+      else {
+          console.log("Enter new department name (required");
+          return false;
+      }
+  }}
+]
+const getDepartments = () => {
+        const sql = 'SELECT name FROM department';
+        db.query(sql,(err,res)=>{
+           if (err) throw err;
+           else {
+               res = res.map((department) => { 
+                return department.name;
+               }
+            )};
+        });
+}
+const trackerAddRole = [
+    {
+      type: 'input',
+      name: 'title',
+      message: "Enter name of role (required)",
+      validate: title => {
+        if (title) return true;
+        else {
+            console.log("Enter name of role (required");
+            return false;
+        }
+    }},
+    {
+      type: 'input',
+      name: 'salary',
+      message: "Enter salary of role (required)",
+      validate: salary => {
+        if (salary) return true;
+        else {
+            console.log("Enter salary of role (required");
+            return false;
+        }
+    }},
+    {
+      type: 'list',
+      name: 'departmentList',
+      message: "Select department of role (required)",
+      choices: getDepartments(),
+       
+    },
+    {
+      type: 'input',
+      name: 'role',
+      message: "Enter name of role (required)",
+      validate: role => {
+        if (role) return true;
+        else {
+            console.log("Enter name of role (required");
+            return false;
+        }
+    }},
+  ]
+const trackerAddEmployee = [
+    {
+      type: 'input',
+      name: 'firstName',
+      message: "Enter employee first name (required)",
+      validate: firstName => {
+        if (firstName) return true;
+        else {
+            console.log("Enter employee first name (required");
+            return false;
+            }
+        }
+    },
+    {
+      type: 'input',
+      name: 'lastName',
+      message: "Enter employee last name (required)",
+      validate: lastName => {
+        if (lastName) return true;
+        else {
+            console.log("Enter employee last name (required");
+            return false;
+            }
+        }
+    },
+    {
+      type: 'list',
+      name: 'role',
+      message: "Select employee role (required)",
+      choices: roles,
+    },
+    {
+      type: 'list',
+      name: 'manager',
+      message: "Select employee's manager id (required)",
+      choices: managers, 
+    },
+  ]
 const viewDepartments = () => {
     const sql = 'SELECT * FROM department';
     db.query(sql, (err,res) => {
@@ -78,6 +183,21 @@ const viewEmployees = () => {
     init();
 };
 
+const addDepartment = (data) => {
+    const sql = 'INSERT INTO department(name) VALUES (?) ';
+    db.query(sql, data, (err) => {
+        if (err) throw err;
+        else {
+            console.log("\n")
+            console.log(`${data} department has been added.`);
+            console.log("\nPress any key to continue...");
+        }
+    })
+    init();
+};
+
+
+
 const trackerSwitch = (data) => {
     switch (data.main_options) {
         case trackerMain_options[0]:
@@ -90,13 +210,19 @@ const trackerSwitch = (data) => {
             viewEmployees();
             break;
         case trackerMain_options[3]:
-            addDepartment();
+            inquirer.prompt(trackerAddDepartment)
+            .then((response)=> addDepartment(response.departmentName))
+            .catch(()=>console.error("Oops, Something went wrong :("));
             break;
         case trackerMain_options[4]:
-            addRole();
+            inquirer.prompt(trackerAddRole)
+            .then((response)=> addRole(response))
+            .catch(()=>console.error("Oops, Something went wrong :("));
             break;
         case trackerMain_options[5]:
-            addEmployee();
+            inquirer.prompt(trackerAddEmployee)
+            .then((response)=> addEmployee(response))
+            .catch(()=>console.error("Oops, Something went wrong :("));
             break;
         case trackerMain_options[6]:
             updateEmployee();
@@ -107,8 +233,7 @@ const trackerSwitch = (data) => {
     }
 }
 //initialize app
-function init(){
-    
+function init(){    
     inquirer.prompt(trackerMain)
     .then ((response) => trackerSwitch(response))
     .catch(()=> console.error("Oops, Something went wrong :("));
