@@ -65,7 +65,18 @@ const viewRoles = () => {
     })
     init();
 };
-
+const viewEmployees = () => {
+    const sql = 'SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name," ", manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id';
+    db.query(sql, (err,res) => {
+        if (err) throw err;
+        else {
+            console.log("\n")
+            console.table(res);
+            console.log("\nPress any key to continue...");
+        }
+    })
+    init();
+};
 
 const trackerSwitch = (data) => {
     switch (data.main_options) {
