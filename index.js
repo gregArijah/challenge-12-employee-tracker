@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');            //CLI interface for node.js
 const mysql = require('mysql2');                 //mySQL client   
-require("console.table");          //table method to write to console
+//require("console.table");          //table method to write to console
 //import functions in other file
 // const { viewDepartments,viewEmployees,  viewRoles, addDepartment, 
 //         addRole, addEmployee, updateEmployeeRole, selectRole, 
@@ -20,8 +20,8 @@ const db = mysql.createConnection(
   );
 
 
-//object arrays to be passed to inquirer
-const trackerMain_options = [
+
+const promptMain_options = [    //object arrays to be passed to inquirer
     "View all departments",
     "View all roles", 
     "View all employees", 
@@ -31,17 +31,16 @@ const trackerMain_options = [
     "Update an employee role",
     "Exit"
 ]
-
-const trackerMain = [   
+const promptMain = [   //main prompt at program startup
   {
     type: 'list',
     name: 'main_options',
     message: 'Select one of the following options',            
-    choices : trackerMain_options,       
+    choices : promptMain_options,       
     
   },
 ]
-const trackerAddDepartment = [
+const promptAddDepartment = [   //add new department to business
   {
     type: 'input',
     name: 'departmentName',
@@ -54,7 +53,7 @@ const trackerAddDepartment = [
       }
   }}
 ]
-const trackerAddRole = (departments) => [
+const promptAddRole = (departments) => [    //add new role to business
     {
       type: 'input',
       name: 'title',
@@ -85,7 +84,7 @@ const trackerAddRole = (departments) => [
       choices: departments, 
     },
 ]
-const trackerAddEmployee = (employees, roles) => [
+const promptAddEmployee = (employees, roles) => [   //add employee
     {
       type: 'input',
       name: 'firstName',
@@ -123,7 +122,7 @@ const trackerAddEmployee = (employees, roles) => [
       choices: employees,
     },
 ]
-const trackerUpdateEmployee = (employees,roles) => [
+const promptUpdateEmployee = (employees,roles) => [ //update employee role
     {
         type: 'list',
         name: 'selectEmployee',
@@ -137,43 +136,43 @@ const trackerUpdateEmployee = (employees,roles) => [
         choices: roles,
     },
 ]
-const viewDepartments = () => {
+const viewDepartments = () => { //view departments
     const sql = 'SELECT * FROM department';
     db.query(sql, (err,res) => {
         if (err) throw err;
         else {
-            console.log("\n")
+            console.log("\n");
             console.table(res);
             console.log("\nPress any key to continue...");
         }
     })
     init();
 };
-const viewRoles = () => {
+const viewRoles = () => {   //views job information
     const sql = 'SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id';
     db.query(sql, (err,res) => {
         if (err) throw err;
         else {
-            console.log("\n")
+            console.log("\n");
             console.table(res);
             console.log("\nPress any key to continue...");
         }
     })
     init();
 };
-const viewEmployees = () => {
+const viewEmployees = () => {   //view all employees
     const sql = 'SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name," ", manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id';
     db.query(sql, (err,res) => {
         if (err) throw err;
         else {
-            console.log("\n")
+            console.log("\n");
             console.table(res);
             console.log("\nPress any key to continue...");
         }
     })
     init();
 };
-const addDepartment = () => {
+const addDepartment = () => {   //add a new department
     const addToDb = (data) => {
         const sql = 'INSERT INTO department(name) VALUES (?) ';
         db.query(sql, data, (err) => {
@@ -186,12 +185,12 @@ const addDepartment = () => {
         })
         init();
     }
-    inquirer.prompt(trackerAddDepartment)
+    inquirer.prompt(promptAddDepartment)
     .then((response)=> addToDb(response.departmentName))
     .catch(()=>console.error("Oops, Something went wrong :(")); 
 
 };
-const addRole = () => {
+const addRole = () => { //add new roles to company
     const addToDb = ({title,salary,roleDepartment}) => {
         const sql = 'INSERT INTO role (title, salary, department_id) VALUES (?,?,?)';
         const params = [title,salary,roleDepartment];
@@ -214,13 +213,13 @@ const addRole = () => {
             };
         });
     
-        inquirer.prompt(trackerAddRole(departments))
+        inquirer.prompt(promptAddRole(departments))
         .then((response)=> addToDb(response))
         .catch(()=>console.error("Oops, Something went wrong :("));
         }
     )
 };
-const addEmployee = () => {
+const addEmployee = () => { //add new employee
     const addToDb = ({firstName,lastName,role,manager}) => {
         const sql = 'INSERT INTO employee (first_name,last_name,role_id,manager_id) VALUES (?,?,?,?)';
         const params = [firstName,lastName,role,manager];
@@ -250,22 +249,29 @@ const addEmployee = () => {
                     value: role.id,
                 };
             });
-            inquirer.prompt(trackerAddEmployee(employees,roles))
+            inquirer.prompt(employees,roles)
             .then((response)=> addToDb(response))
             .catch(()=>console.error("Oops, Something went wrong :("));
             }
         )
     })
 }; 
-const updateEmployee = () => {
+const updateEmployee = () => {  //update employee role
     const updateDb = ({selectEmployee,selectRole}) => {
-        const sql = 'UPDATE employee SET ? WHERE?';
-        const params = [selectEmployee,selectRole];
+        const sql = 'UPDATE employee SET ? WHERE ?';
+        const params = [
+            {
+                role_id: selectRole
+            },
+            {
+                id: selectEmployee
+            }
+        ];
         db.query(sql, params ,(err) => {
-            if (err) throw err;
+            if (err) console.log(err);//throw err;
             else {
                 console.log("\n");
-                console.log(`Employee ${selectEmployee} has been updates.`);
+                console.log(`Employee role has been updated.`);
                 console.log("\nPress any key to continue...");
             }
         })
@@ -287,58 +293,54 @@ const updateEmployee = () => {
                     value: role.id,
                 }
             });    
-            inquirer.prompt(trackerUpdateEmployee(employees,roles))
+            inquirer.prompt(employees,roles)
             .then((response)=> updateDb(response))
             .catch(()=>console.error("Oops, Something went wrong :("));
             }
         )
     });
 }
-
-
-const trackerSwitch = (data) => {
+const promptSwitch = (data) => {    //case statement
     switch (data.main_options) {
-        case trackerMain_options[0]: //view departments
+        case promptMain_options[0]: //view departments
             viewDepartments();
             break;
 
-        case trackerMain_options[1]: //view roles
+        case promptMain_options[1]: //view roles
             viewRoles();
             break;
 
-        case trackerMain_options[2]: //view employees
+        case promptMain_options[2]: //view employees
             viewEmployees();
             break;
         
-        case trackerMain_options[3]: //add department
+        case promptMain_options[3]: //add department
             addDepartment();
             break;
 
-        case trackerMain_options[4]: //add role
+        case promptMain_options[4]: //add role
             addRole();
             break;
             
-        case trackerMain_options[5]: //add employee
+        case promptMain_options[5]: //add employee
             addEmployee();
             break;
 
-        case trackerMain_options[6]: //update employee
+        case promptMain_options[6]: //update employee
             updateEmployee();
             break;
 
-        case trackerMain_options[7]: //exit
+        case promptMain_options[7]: //exit
             exit();
             break;
     }
 }
 //initialize app
-function init(){
-        
-    inquirer.prompt(trackerMain)
-    .then ((response) => trackerSwitch(response))
+function init(){  
+    inquirer.prompt(promptMain)
+    .then ((response) => promptSwitch(response))
     .catch(()=> console.error("Oops, Something went wrong :("));
 }
-
 init();
 
 //module.exports = db;
