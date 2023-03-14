@@ -2,8 +2,8 @@ const inquirer = require('inquirer');       //CLI interface for node.js
 const mysql = require('mysql2');            //mySQL client   
 //require("console.table");                 //table method to write to console
 
-// Connect to database
-const db = mysql.createConnection(
+
+const db = mysql.createConnection(  // Connect to database
     {
       host: 'localhost',
       user: 'root',// MySQL username,
@@ -12,7 +12,7 @@ const db = mysql.createConnection(
     },
     console.log(`Successfully connected to the employees database.`)
   );
-const promptMain_options = [    //object arrays to be passed to inquirer
+const promptMain_options = [    //array of choices to be passed to inquirer in promptMain
     "View all departments",
     "View all roles", 
     "View all employees", 
@@ -36,9 +36,9 @@ const promptAddDepartment = [   //add new department to business
     type: 'input',
     name: 'departmentName',
     message: "Enter new department name (required)",
-    validate: departmentName => {
-      if (departmentName) return true;
-      else {
+    validate: departmentName => {   //make sure field is not empty
+      if (departmentName) return true;  
+      else {                         
           console.log("Enter new department name (required");
           return false;
       }
@@ -50,7 +50,7 @@ const promptAddRole = (departments) => [    //add new role to business
       name: 'title',
       message: "Enter name of role (required)",
       validate: title => {
-        if (title) return true;
+        if (title) return true;     //make sure field is not empty
         else {
             console.log("Enter name of role (required");
             return false;
@@ -61,7 +61,7 @@ const promptAddRole = (departments) => [    //add new role to business
       name: 'salary',
       message: "Enter salary of role (required)",
       validate: salary => {
-        if (salary) return true;
+        if (salary) return true;    //make sure field is not empty
         else {
             console.log("Enter salary of role (required");
             return false;
@@ -72,7 +72,7 @@ const promptAddRole = (departments) => [    //add new role to business
       type: 'list',
       name: 'roleDepartment',
       message: "Select department of role (required)",
-      choices: departments, 
+      choices: departments,     //value passed in function call 
     },
 ]
 const promptAddEmployee = (employees, roles) => [   //add employee
@@ -80,7 +80,7 @@ const promptAddEmployee = (employees, roles) => [   //add employee
       type: 'input',
       name: 'firstName',
       message: "Enter employee first name (required)",
-      validate: firstName => {
+      validate: firstName => {  //make sure field is not empty
         if (firstName) return true;
         else {
             console.log("Enter employee first name (required");
@@ -93,7 +93,7 @@ const promptAddEmployee = (employees, roles) => [   //add employee
       name: 'lastName',
       message: "Enter employee last name (required)",
       validate: lastName => {
-        if (lastName) return true;
+        if (lastName) return true;  //make sure field is not empty
         else {
             console.log("Enter employee last name (required");
             return false;
@@ -104,13 +104,13 @@ const promptAddEmployee = (employees, roles) => [   //add employee
       type: 'list',
       name: 'role',
       message: "Select employee role (required)",
-      choices: roles,
+      choices: roles,   //value passed in function call
     },
     {
       type: 'list',
       name: 'manager',
       message: "Select employee's manager (required)",
-      choices: employees,
+      choices: employees,   //value passed in function call
     },
 ]
 const promptUpdateEmployee = (employees,roles) => [ //update employee role
@@ -118,19 +118,20 @@ const promptUpdateEmployee = (employees,roles) => [ //update employee role
         type: 'list',
         name: 'selectEmployee',
         message: 'Select an employee to update role.',
-        choices: employees,
+        choices: employees,   //passed in function call
     },
     {
         type: 'list',
         name: 'selectRole',
         message: 'Select new role.',
-        choices: roles,
+        choices: roles, //passed in fucntion call
     },
 ]
 const viewDepartments = () => { //view departments
+    //query db
     const sql = 'SELECT * FROM department';
     db.query(sql, (err,res) => {
-        if (err) throw err;
+        if (err) console.error("Oops, Something went wrong :(");//throw err;
         else {
             console.log("\n");
             console.table(res);
@@ -140,9 +141,10 @@ const viewDepartments = () => { //view departments
     init();
 };
 const viewRoles = () => {   //views job information
+    //query db
     const sql = 'SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id';
     db.query(sql, (err,res) => {
-        if (err) throw err;
+        if (err) console.error("Oops, Something went wrong :(");//throw err;
         else {
             console.log("\n");
             console.table(res);
@@ -152,9 +154,10 @@ const viewRoles = () => {   //views job information
     init();
 };
 const viewEmployees = () => {   //view all employees
+    //query db
     const sql = 'SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name," ", manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id';
     db.query(sql, (err,res) => {
-        if (err) throw err;
+        if (err) console.error("Oops, Something went wrong :(")//throw err;
         else {
             console.log("\n");
             console.table(res);
@@ -164,10 +167,11 @@ const viewEmployees = () => {   //view all employees
     init();
 };
 const addDepartment = () => {   //add a new department
+    //update db
     const addToDb = (data) => {
         const sql = 'INSERT INTO department(name) VALUES (?) ';
         db.query(sql, data, (err) => {
-            if (err) throw err;
+            if (err) console.error("Oops, Something went wrong :(")//throw err;
             else {
                 console.log("\n"),
                 console.log(`${data} department has been added.`);
@@ -182,11 +186,12 @@ const addDepartment = () => {   //add a new department
 
 };
 const addRole = () => { //add new roles to company
+    //update db
     const addToDb = ({title,salary,roleDepartment}) => {
         const sql = 'INSERT INTO role (title, salary, department_id) VALUES (?,?,?)';
         const params = [title,salary,roleDepartment];
         db.query(sql, params ,(err) => {
-            if (err) throw err;
+            if (err) console.error("Oops, Something went wrong :(")//throw err;
             else {
                 console.log("\n");
                 console.log(`${title} role has been added.`);
@@ -195,8 +200,9 @@ const addRole = () => { //add new roles to company
         })
         init();
     }
+    //query db
     db.query('SELECT * FROM department', (err, departments) => {
-        if (err) console.log(err);
+        if (err) console.error("Oops, Something went wrong :(");
         departments = departments.map((department) => {
             return {
                 name: department.name,
@@ -211,11 +217,12 @@ const addRole = () => { //add new roles to company
     )
 };
 const addEmployee = () => { //add new employee
+    //update db
     const addToDb = ({firstName,lastName,role,manager}) => {
         const sql = 'INSERT INTO employee (first_name,last_name,role_id,manager_id) VALUES (?,?,?,?)';
         const params = [firstName,lastName,role,manager];
         db.query(sql, params ,(err) => {
-            if (err) throw err;
+            if (err) console.error("Oops, Something went wrong :(");//throw err;
             else {
                 console.log("\n");
                 console.log(`Employee ${firstName} ${lastName} has been added.`);
@@ -224,16 +231,18 @@ const addEmployee = () => { //add new employee
         })
         init();
     }
+    //query db
     db.query('SELECT * FROM employee', (err, employees) => {
-        if (err) console.log(err);
+        if (err) console.error("Oops, Something went wrong :(");
         employees = employees.map((employee) => {
             return {
                 name: `${employee.first_name} ${employee.last_name}`,
                 value: employee.id,
             };
         });
+        //query db
         db.query('SELECT * FROM role', (err, roles) => {
-            if (err) console.log(err);
+            if (err) console.error("Oops, Something went wrong :(");
             roles = roles.map((role) => {
                 return {
                     name: role.title,
@@ -248,6 +257,7 @@ const addEmployee = () => { //add new employee
     })
 }; 
 const updateEmployee = () => {  //update employee role
+    //update db
     const updateDb = ({selectEmployee,selectRole}) => {
         const sql = 'UPDATE employee SET ? WHERE ?';
         const params = [
@@ -259,7 +269,7 @@ const updateEmployee = () => {  //update employee role
             }
         ];
         db.query(sql, params ,(err) => {
-            if (err) console.log(err);//throw err;
+            if (err) console.error("Oops, Something went wrong :(");//throw err;
             else {
                 console.log("\n");
                 console.log(`Employee role has been updated.`);
@@ -268,16 +278,18 @@ const updateEmployee = () => {  //update employee role
         })
         init();
     }
+    //query db
     db.query('SELECT * FROM employee', (err, employees) => {
-        if (err) console.log(err);
+        if (err) console.error("Oops, Something went wrong :(");
         employees = employees.map((employee) => {
             return {
                 name: `${employee.first_name} ${employee.last_name}`,
                 value: employee.id,
             };
         });
+        //query db
         db.query('SELECT * FROM role', (err, roles) => {
-            if (err) console.log(err);
+            if (err) console.error("Oops, Something went wrong :(");
             roles = roles.map((role) => {
                 return {
                     name: role.title,
@@ -290,6 +302,10 @@ const updateEmployee = () => {  //update employee role
             }
         )
     });
+}
+const exit = () => {    //exit application
+    console.log("goodbye!");
+    process.exit();
 }
 const promptSwitch = (data) => {    //case statement
     switch (data.main_options) {
