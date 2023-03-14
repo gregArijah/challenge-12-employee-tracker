@@ -6,10 +6,10 @@ INSERT INTO department(name) VALUES
 
 INSERT INTO role (title, salary, department_id) VALUES
 ("Manager", 100000, 1),
-("Engineer", 80000, 2),
+("Engineer", 80000, 1),
 ("Machinist", 85000, 2),
-("Welder", 95000, 2),
-("Toolcrib Attendant", 75000, 2);
+("Welder", 95000, 3),
+("Toolcrib Attendant", 75000, 4);
 
 INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES
 ('Gabby', 'Lopira', 1, null),
