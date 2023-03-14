@@ -1,12 +1,6 @@
-const inquirer = require('inquirer');            //CLI interface for node.js
-const mysql = require('mysql2');                 //mySQL client   
-//require("console.table");          //table method to write to console
-//import functions in other file
-// const { viewDepartments,viewEmployees,  viewRoles, addDepartment, 
-//         addRole, addEmployee, updateEmployeeRole, selectRole, 
-//         selectManager, selectDepartment } = require('./queries');
-//const viewDepartments = require('./queries');
-
+const inquirer = require('inquirer');       //CLI interface for node.js
+const mysql = require('mysql2');            //mySQL client   
+//require("console.table");                 //table method to write to console
 
 // Connect to database
 const db = mysql.createConnection(
@@ -18,9 +12,6 @@ const db = mysql.createConnection(
     },
     console.log(`Successfully connected to the employees database.`)
   );
-
-
-
 const promptMain_options = [    //object arrays to be passed to inquirer
     "View all departments",
     "View all roles", 
@@ -342,5 +333,3 @@ function init(){
     .catch(()=> console.error("Oops, Something went wrong :("));
 }
 init();
-
-//module.exports = db;
