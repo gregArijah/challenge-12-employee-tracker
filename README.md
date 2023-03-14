@@ -1,4 +1,4 @@
-# EMPLOYEE-TRACKER	[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://choosealicense.com/licenses/mit/)
+# EMPLOYEE TRACKER	[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://choosealicense.com/licenses/mit/)
 
 ## Description
 
@@ -6,11 +6,15 @@ This application is command line driven content management systems which uses No
 
 ## Table of Contents
 
+- [DemoVideo](#demovideo)
 - [Installation](#installation)
 - [Usage](#usage)
-- [DemoVideo](#demovideo)
 - [License](#license)
 - [Questions](#questions)
+
+## Demo Video
+
+[Click here to follow link to video walkthrough of application showing all functionality.](https://drive.google.com/file/d/1O5bkMyDxcedYVh68AweOTNSoN9TJyCBz/view)
 
 ## Installation
 
@@ -19,8 +23,6 @@ To run the project(using windows), please navigate to project folder in the term
 ## Usage
 
 After successfully logging in, select one of the options provided to you and follow the prompts to complete the task. To exit the application, select the "Exit" option.
-
-## Demo Video
 
 ## License
 
