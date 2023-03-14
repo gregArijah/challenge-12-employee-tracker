@@ -11,7 +11,7 @@ const db = mysql.createConnection(  // Connect to database
       database: 'employees'
     },
     console.log(`Successfully connected to the employees database.`)
-  );
+);
 const promptMain_options = [    //array of choices to be passed to inquirer in promptMain
     "View all departments",
     "View all roles", 
@@ -21,7 +21,7 @@ const promptMain_options = [    //array of choices to be passed to inquirer in p
     "Add an employee", 
     "Update an employee role",
     "Exit"
-]
+];
 const promptMain = [   //main prompt at program startup
   {
     type: 'list',
@@ -30,7 +30,7 @@ const promptMain = [   //main prompt at program startup
     choices : promptMain_options,       
     
   },
-]
+];
 const promptAddDepartment = [   //add new department to business
   {
     type: 'input',
@@ -43,7 +43,7 @@ const promptAddDepartment = [   //add new department to business
           return false;
       }
   }}
-]
+];
 const promptAddRole = (departments) => [    //add new role to business
     {
       type: 'input',
@@ -74,7 +74,7 @@ const promptAddRole = (departments) => [    //add new role to business
       message: "Select department of role (required)",
       choices: departments,     //value passed in function call 
     },
-]
+];
 const promptAddEmployee = (employees, roles) => [   //add employee
     {
       type: 'input',
@@ -112,7 +112,7 @@ const promptAddEmployee = (employees, roles) => [   //add employee
       message: "Select employee's manager (required)",
       choices: employees,   //value passed in function call
     },
-]
+];
 const promptUpdateEmployee = (employees,roles) => [ //update employee role
     {
         type: 'list',
@@ -126,7 +126,7 @@ const promptUpdateEmployee = (employees,roles) => [ //update employee role
         message: 'Select new role.',
         choices: roles, //passed in fucntion call
     },
-]
+];
 const viewDepartments = () => { //view departments
     //query db
     const sql = 'SELECT * FROM department';
@@ -249,7 +249,7 @@ const addEmployee = () => { //add new employee
                     value: role.id,
                 };
             });
-            inquirer.prompt(employees,roles)
+            inquirer.prompt(promptAddEmployee(employees,roles))
             .then((response)=> addToDb(response))
             .catch(()=>console.error("Oops, Something went wrong :("));
             }
@@ -296,17 +296,17 @@ const updateEmployee = () => {  //update employee role
                     value: role.id,
                 }
             });    
-            inquirer.prompt(employees,roles)
+            inquirer.prompt(promptUpdateEmployee(employees,roles))
             .then((response)=> updateDb(response))
             .catch(()=>console.error("Oops, Something went wrong :("));
             }
         )
     });
-}
+};
 const exit = () => {    //exit application
     console.log("goodbye!");
     process.exit();
-}
+};
 const promptSwitch = (data) => {    //case statement
     switch (data.main_options) {
         case promptMain_options[0]: //view departments
@@ -341,11 +341,10 @@ const promptSwitch = (data) => {    //case statement
             exit();
             break;
     }
-}
-//initialize app
-function init(){  
+};
+function init(){    //initialize app
     inquirer.prompt(promptMain)
     .then ((response) => promptSwitch(response))
     .catch(()=> console.error("Oops, Something went wrong :("));
-}
+};
 init();
