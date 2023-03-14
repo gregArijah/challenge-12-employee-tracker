@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');       //CLI interface for node.js
 const mysql = require('mysql2');            //mySQL client   
-//require("console.table");                 //table method to write to console
+const cTable = require("console.table");                 //table method to write to console
 
 
 const db = mysql.createConnection(  // Connect to database

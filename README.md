@@ -2,17 +2,25 @@
 
 ## Description
 
-Command line driven content management systems which uses Node. js Inquirer, and MySQL. It allows business owners to view and manage the departments, roles, employees in their companies.  
+This application is command line driven content management systems which uses Node. js, Inquirer, and MySQL. It allows business owners to view and manage the departments, roles, employees in their companies.  
 
 ## Table of Contents
 
 - [Installation](#installation)
+- [Usage](#usage)
+- [DemoVideo](#demovideo)
 - [License](#license)
 - [Questions](#questions)
 
 ## Installation
 
-To run the project(using windows), please navigate to priject folder in the terminal and "use npm i" to install any dependencies. 
+To run the project(using windows), please navigate to project folder in the terminal and "use npm i" to install any dependencies. After, log into mysql and run the following commands "source schema.sql;" and "source seeds.sql;". After run "node. index.js" to start application.
+
+## Usage
+
+After successfully logging in, select one of the options provided to you and follow the prompts to complete the task. To exit the application, select the "Exit" option.
+
+## Demo Video
 
 ## License
 
